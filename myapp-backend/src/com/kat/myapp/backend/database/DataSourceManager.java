@@ -23,7 +23,7 @@ public class DataSourceManager {
 			BasicDataSource ds = new BasicDataSource();
 			ds.setUrl("jdbc:mysql://localhost/myapp");
 			ds.setUsername("root");
-			ds.setPassword("toor");
+			ds.setPassword("weblogic01");
 			ds.setMinIdle(5);
 			ds.setMaxIdle(10);
 			ds.setMaxOpenPreparedStatements(100);
