@@ -16,6 +16,18 @@ public class CustomerTest {
 	public static void main(String[] args) {
 	
 		try {
+			// ================  add new customer
+			Customer newCust = new Customer();
+			newCust.setFirstName("Anna");
+			newCust.setLastName("Yuen");
+			newCust.setHomeNumber("1234567890");
+			newCust.setWorkNumber("");
+			newCust.setCellNumber("8454614679");
+			newCust.setEmail("annayuen@usa.net");
+			
+			newCust.addCustomer();
+			
+			
 			List<Customer> list = Customer.getCustomers(false);
 			for ( Customer cust : list) {
 				logger.debug(cust.toString());
