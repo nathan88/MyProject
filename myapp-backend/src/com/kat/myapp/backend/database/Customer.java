@@ -20,10 +20,10 @@ public class Customer {
 			+ "email,address01,address02,city,state,postalCode,country from Customer"; 
 	private static final String SQL_SELECT_ORDER = " Order By firstName, lastName ";
 	
-	private static List<Customer>customers ;
+	//private static List<Customer>customers ;
 	
 	private String sqlWhereString = " Where (1=1) ";  //all
-	private String sqlValueString ;  
+//	private String sqlValueString ;  
 	
 	private int id;
 	private String firstName;
@@ -83,7 +83,9 @@ public class Customer {
 			throw new ServiceException("Retrieve Customers failed. " + e.getMessage());
 		}
 	}
-	private static void retrieveCustomers() throws ServiceException {
+	
+	private static List<Customer> retrieveCustomers() throws ServiceException {
+		List<Customer> list = new ArrayList<>();
 		try {
 			Connection connection = DataSourceManager.getInstance().getConnection();
 			Statement st = connection.createStatement();
@@ -93,7 +95,7 @@ public class Customer {
 			ResultSet rs = st.executeQuery(query_str);
 			while (rs.next()) {
 				Customer cust = new Customer(rs);
-				customers.add(cust);
+				list.add(cust);
 			}
 			
 			
@@ -102,9 +104,49 @@ public class Customer {
 			e.printStackTrace();
 			throw new ServiceException("Retrieve Customers failed. " + e.getMessage());
 		}
+		
+		return list;
 	}
 	
+	private static List<Customer> retrieveCustomerByPhone(String phoneNumber, PhoneType type) throws ServiceException {
+		List<Customer> list = new ArrayList<>();
+		try {
+			Connection connection = DataSourceManager.getInstance().getConnection();
+			Statement st = connection.createStatement();
+			
+			String query_str = SQL_SELECT + getPhoneValueString(phoneNumber, type) + SQL_SELECT_ORDER;
+			logger.debug("query_str: " + query_str);
+			ResultSet rs = st.executeQuery(query_str);
+			while (rs.next()) {
+				Customer cust = new Customer(rs);
+				list.add(cust);
+			}
+			
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new ServiceException("Retrieve Customers failed. " + e.getMessage());
+		}
+		
+		return list;
+	}
 	
+	private static String getPhoneValueString(String phoneNumber, PhoneType type) {
+		switch ( type ) {
+		case HOME_PHONE:
+			return " Where homeNumber = " + StringUtil.addQuotes(phoneNumber);
+			
+		case WORK_PHONE:
+			return " Where workNumber = " + StringUtil.addQuotes(phoneNumber);
+			
+		case CELL_PHONE:
+			return " Where cellNumber = " + StringUtil.addQuotes(phoneNumber);
+			
+		}
+		
+		return "";
+	}
 	
 	public Customer() {
 		super();
@@ -136,17 +178,15 @@ public class Customer {
 		
 	}
 
-	public static List<Customer> getCustomers(boolean refresh) throws ServiceException {
-		if ( customers == null || refresh ) {
-			customers = new ArrayList<>();
-			retrieveCustomers();
-		}
-		return customers;
+	public static List<Customer> getCustomers() throws ServiceException {
+		return retrieveCustomers();
+	}
+	
+	public static List<Customer> getCustomersByPhone(String phoneNumber, PhoneType type) throws ServiceException {
+		return retrieveCustomerByPhone(phoneNumber, type);
 	}
 
-	public void setCustomers(List<Customer> customers) {
-		this.customers = customers;
-	}
+
 	public String getSqlWhereString() {
 		return sqlWhereString;
 	}

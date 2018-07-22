@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import com.kat.myapp.backend.database.Customer;
+import com.kat.myapp.backend.database.PhoneType;
 import com.kat.myapp.backend.exception.ServiceException;
 
 
@@ -17,18 +18,26 @@ public class CustomerTest {
 	
 		try {
 			// ================  add new customer
-			Customer newCust = new Customer();
-			newCust.setFirstName("Anna");
-			newCust.setLastName("Yuen");
-			newCust.setHomeNumber("1234567890");
-			newCust.setWorkNumber("");
-			newCust.setCellNumber("8454614679");
-			newCust.setEmail("annayuen@usa.net");
+//			Customer newCust = new Customer();
+//			newCust.setFirstName("Anna");
+//			newCust.setLastName("Yuen");
+//			newCust.setHomeNumber("1234567890");
+//			newCust.setWorkNumber("");
+//			newCust.setCellNumber("8454614679");
+//			newCust.setEmail("annayuen@usa.net");
+//			
+//			newCust.addCustomer();
 			
-			newCust.addCustomer();
+			List<Customer> list;
 			
+			logger.debug("====================================================");
+			list = Customer.getCustomers();
+			for ( Customer cust : list) {
+				logger.debug(cust.toString());
+			}
 			
-			List<Customer> list = Customer.getCustomers(false);
+			logger.debug("====================================================");
+			list = Customer.getCustomersByPhone("8454618886", PhoneType.CELL_PHONE);
 			for ( Customer cust : list) {
 				logger.debug(cust.toString());
 			}
