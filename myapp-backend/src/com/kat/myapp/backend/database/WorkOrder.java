@@ -1,15 +1,28 @@
 package com.kat.myapp.backend.database;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.log4j.Logger;
+
+import com.kat.myapp.backend.exception.ServiceException;
+import com.kat.myapp.backend.util.StringUtil;
+
 
 public class WorkOrder {
 	
 	final static Logger logger = Logger.getLogger(WorkOrder.class);
 	
-	private static final String SQL_INSERT = "insert into workOrder (customerID,vin,advisor,dateOpened,visitReason,estimateDateTime,"
+	private static final String SQL_INSERT = "insert into workorder (customerID,vin,advisor,dateOpened,visitReason,estimateDateTime,"
 			+ "promisedDateTime,statusCode,readyDateTime,billingRate) ";	
-	private static final String SQL_SELECT = "Select workOrderID,customerID,vin,advisor,dateOpened,visitReason,estimateDateTime,"  
-			+ "promisedDateTime,statusCode,readyDateTime,billingRate, b.description from workOrder a, status b where a.statusCode = b.statusCode "; 
+	//private static final String SQL_SELECT = "SELECT workOrderID, customerID, vin, advisor, dateOpened, visitReason, estimateDateTime,"  
+	//		+ "promisedDateTime, statusCode, readyDateTime, billingRate, b.description from workOrder a, status b where a.statusCode = b.statusCode "; 
+	private static final String SQL_SELECT = "SELECT workOrderID, customerID, vin, advisor, dateOpened, visitReason, estimateDateTime,"
+			+ "promisedDateTime, statusCode, readyDateTime, billingRate from workOrder";
 	private static final String SQL_SELECT_ORDER = " Order By dateOpened ";
 	
 	private int workOrderID;
@@ -25,9 +38,96 @@ public class WorkOrder {
 	private float billingRate;
 	private String statusString;
 	
-
-
 	private Customer customer;
+	
+	private String getValuesString() {
+		StringBuffer sb = new StringBuffer(" values(");
+		
+		sb.append(getCustomerID() +", ");
+		sb.append(StringUtil.addQuotes(getVin()) +", ");
+		sb.append(StringUtil.addQuotes(getAdvisor()) +", ");
+		sb.append(StringUtil.addQuotes(getDateOpened()) +", ");
+		sb.append(StringUtil.addQuotes(getVisitReason()) +", ");
+		sb.append(StringUtil.addQuotes(getEstimateDateTime()) +", ");
+		sb.append(StringUtil.addQuotes(getPromisedDateTime()) +", ");
+		sb.append(getStatusCode() +", ");
+		sb.append(StringUtil.addQuotes(getReadyDateTime()) +", ");
+		sb.append(getBillingRate() +", ");
+		
+		return sb.toString();
+	}
+	
+	
+	public void addWorkOrder() throws ServiceException {
+		try {
+			Connection connection = DataSourceManager.getInstance().getConnection();
+			Statement st = connection.createStatement();
+			
+			String insert_str = SQL_INSERT + getValuesString();
+			logger.debug("query_str: " + insert_str);
+			int cnt = st.executeUpdate(insert_str);
+			
+			if ( cnt > 0 ) {
+				ResultSet rs = st.executeQuery("select last_insert_id()");
+				if ( rs.next() ) {
+					int lastid = rs.getInt(1);
+					logger.debug("last_id: <" + lastid + ">");
+					setWorkOrderID(lastid);
+					rs.close();
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new ServiceException("Add WorkOrders failed. " + e.getMessage());
+		}
+	}
+	
+	private static List<WorkOrder> retrieveWorkOrders() throws ServiceException {
+		List<WorkOrder> list = new ArrayList<>();
+		try {
+			Connection connection = DataSourceManager.getInstance().getConnection();
+			Statement st = connection.createStatement();
+			String query_str = SQL_SELECT + SQL_SELECT_ORDER;
+			logger.debug("query_str: " + query_str);
+			ResultSet rs = st.executeQuery(query_str);
+			while (rs.next()) {
+				WorkOrder work = new WorkOrder(rs);
+				list.add(work);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new ServiceException("Retrieve WorkOrders failed. " + e.getMessage());
+		}
+		return list;
+	}
+
+	public WorkOrder() {
+		super();
+	}
+	
+	public WorkOrder(ResultSet rs) throws ServiceException {
+		try {
+			setWorkOrderID(rs.getInt("workOrderID"));
+			setCustomerID(rs.getInt("customerID"));
+			setVin(rs.getString("vin"));
+			setAdvisor(rs.getString("advisor"));
+			setDateOpened(rs.getString("dateOpened"));
+			setVisitReason(rs.getString("visitReason"));
+			setEstimateDateTime(rs.getString("estimateDateTime"));
+			setPromisedDateTime(rs.getString("promisedDateTime"));
+			setStatusCode(rs.getInt("statusCode"));
+			setReadyDateTime(rs.getString("readyDateTime"));
+			setBillingRate(rs.getFloat("billingRate"));
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new ServiceException(e.getMessage());
+		}
+	}
+	
+	public static List<WorkOrder> getWorkOrders() throws ServiceException {
+		return retrieveWorkOrders();
+	}
 	
 	
 	
@@ -104,8 +204,6 @@ public class WorkOrder {
 	public void setStatusString(String statusString) {
 		this.statusString = statusString;
 	}
-
-
 	
 	//---------------------  Customer Info ----------------------------------------
 	
@@ -120,7 +218,8 @@ public class WorkOrder {
 			return customer.getSecondaryNumber();
 	}
 	
-	//----------------------- Vechile Info --------------------------------------
+
+	//----------------------- Vehicle Info --------------------------------------
 	
 	public String getVehicleMake() {
 		return "";
