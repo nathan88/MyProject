@@ -114,13 +114,10 @@ public class WorkOrder {
 	}
 	
 	public String getCustomnerContactNumber () {
-		if ( customer.getCellNumber().length() > 0 )
-			return customer.getCellNumber();
+		if ( customer.getPrimaryNumber().length() > 0 )
+			return customer.getPrimaryNumber();
 		else 
-		if (customer.getWorkNumber().length() > 0 )
-			return customer.getWorkNumber();
-		else
-			return customer.getHomeNumber();
+			return customer.getSecondaryNumber();
 	}
 	
 	//----------------------- Vechile Info --------------------------------------

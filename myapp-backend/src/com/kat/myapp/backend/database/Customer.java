@@ -15,25 +15,26 @@ import com.kat.myapp.backend.util.StringUtil;
 public class Customer {
 	final static Logger logger = Logger.getLogger(Customer.class);
 	
-	private static final String SQL_INSERT = "insert into Customer (firstName,lastName,homeNumber,workNumber,cellNumber,email,address01,address02,city,state,postalCode,country) ";	
-	private static final String SQL_SELECT = "Select customerID,firstName,lastName,homeNumber,workNumber,cellNumber,"
-			+ "email,address01,address02,city,state,postalCode,country from Customer"; 
+	private static final String SQL_INSERT = "insert into Customer (firstName,lastName,secondaryNumber,primaryNumber,email,address01,address02,city,state,postalCode,country) ";	
+	private static final String SQL_SELECT = "Select customerID,firstName,lastName,homeNumber,secondaryNumber,primaryNumber,"
+			+ "email,address,city,state,postalCode,country from Customer"; 
+	private static final String SQL_WHERE_BY_NAME   = " and firstName like '%@@var%' "; 
+	private static final String SQL_WHERE_BY_NUMBER = " and primaryNumber like '%@@var%'  or secondaryNumber like '%@@var%' "; 
+//	private static final String SQL_WHERE_BY_PLATE = " firstName like '%@@var%\' "; 
 	private static final String SQL_SELECT_ORDER = " Order By firstName, lastName ";
 	
 	//private static List<Customer>customers ;
 	
-	private String sqlWhereString = " Where (1=1) ";  //all
+//	private String sqlWhereString = " Where (1=1) ";  //all
 //	private String sqlValueString ;  
 	
 	private int id;
 	private String firstName;
 	private String lastName;
-	private String homeNumber;
-	private String workNumber;
-	private String cellNumber ;
+	private String secondaryNumber;
+	private String primaryNumber ;
 	private String email ;
-	private String address01 ;
-	private String address02 ; 
+	private String address ;
 	private String city ;
 	private String state;
 	private String postalCode;
@@ -45,12 +46,10 @@ public class Customer {
 		
 		sb.append(StringUtil.addQuotes(getFirstName()) +", ");
 		sb.append(StringUtil.addQuotes(getLastName()) +", ");
-		sb.append(StringUtil.addQuotes(getHomeNumber()) +", ");
-		sb.append(StringUtil.addQuotes(getWorkNumber()) +", ");
-		sb.append(StringUtil.addQuotes(getCellNumber()) +", ");
+		sb.append(StringUtil.addQuotes(getSecondaryNumber()) +", ");
+		sb.append(StringUtil.addQuotes(getPrimaryNumber()) +", ");
 		sb.append(StringUtil.addQuotes(getEmail()) +", ");
-		sb.append(StringUtil.addQuotes(getAddress01()) +", ");
-		sb.append(StringUtil.addQuotes(getAddress02()) +", ");
+		sb.append(StringUtil.addQuotes(getAddress()) +", ");
 		sb.append(StringUtil.addQuotes(getCity()) +", ");
 		sb.append(StringUtil.addQuotes(getState()) +", ");
 		sb.append(StringUtil.addQuotes(getPostalCode()) +", ");
@@ -108,6 +107,33 @@ public class Customer {
 		return list;
 	}
 	
+	private static List<Customer> retrieveCustomersByContactNumber(String number) throws ServiceException {
+		String sqlWhereString = " Where (1=1) " + SQL_WHERE_BY_NUMBER;
+		sqlWhereString = sqlWhereString.replaceAll("@@var", number);
+		
+		List<Customer> list = new ArrayList<>();
+		try {
+			Connection connection = DataSourceManager.getInstance().getConnection();
+			Statement st = connection.createStatement();
+			
+			String query_str = SQL_SELECT + sqlWhereString + SQL_SELECT_ORDER;
+			logger.debug("query_str: " + query_str);
+			ResultSet rs = st.executeQuery(query_str);
+			while (rs.next()) {
+				Customer cust = new Customer(rs);
+				list.add(cust);
+			}
+			
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new ServiceException("Retrieve Customers failed. " + e.getMessage());
+		}
+		
+		return list;
+	}
+	
 	private static List<Customer> retrieveCustomerByPhone(String phoneNumber, PhoneType type) throws ServiceException {
 		List<Customer> list = new ArrayList<>();
 		try {
@@ -138,10 +164,10 @@ public class Customer {
 			return " Where homeNumber = " + StringUtil.addQuotes(phoneNumber);
 			
 		case WORK_PHONE:
-			return " Where workNumber = " + StringUtil.addQuotes(phoneNumber);
+			return " Where secondaryNumber = " + StringUtil.addQuotes(phoneNumber);
 			
 		case CELL_PHONE:
-			return " Where cellNumber = " + StringUtil.addQuotes(phoneNumber);
+			return " Where primaryNumber = " + StringUtil.addQuotes(phoneNumber);
 			
 		}
 		
@@ -159,12 +185,10 @@ public class Customer {
 			setId(rs.getInt("customerID"));
 			setFirstName(rs.getString("firstName"));
 			setLastName(rs.getString("lastName"));
-			setHomeNumber(rs.getString("homeNumber"));
-			setWorkNumber(rs.getString("workNumber"));
-			setCellNumber(rs.getString("cellNumber"));
+			setSecondaryNumber(rs.getString("secondaryNumber"));
+			setPrimaryNumber(rs.getString("primaryNumber"));
 			setEmail(rs.getString("email"));
-			setAddress01(rs.getString("address01"));
-			setAddress02(rs.getString("address02"));
+			setAddress(rs.getString("address"));
 			setCity(rs.getString("city"));
 			setState(rs.getString("state"));
 			setPostalCode(rs.getString("postalCode"));
@@ -185,14 +209,13 @@ public class Customer {
 	public static List<Customer> getCustomersByPhone(String phoneNumber, PhoneType type) throws ServiceException {
 		return retrieveCustomerByPhone(phoneNumber, type);
 	}
+	
+	public static List<Customer> getCustomersByContactNumber(String number) throws ServiceException {
+		return retrieveCustomersByContactNumber(number);
+	}
 
 
-	public String getSqlWhereString() {
-		return sqlWhereString;
-	}
-	public void setSqlWhereString(String sqlWhereString) {
-		this.sqlWhereString = sqlWhereString;
-	}
+
 	public int getId() {
 		return id;
 	}
@@ -215,29 +238,21 @@ public class Customer {
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
 	}
-	public String getHomeNumber() {
-		if ( homeNumber == null )
-			homeNumber = "";
-		return homeNumber;
+	public String getSecondaryNumber() {
+		if ( secondaryNumber == null )
+			secondaryNumber = "";
+		return secondaryNumber;
 	}
-	public void setHomeNumber(String homeNumber) {
-		this.homeNumber = homeNumber;
+	public void setSecondaryNumber(String secondaryNumber) {
+		this.secondaryNumber = secondaryNumber;
 	}
-	public String getWorkNumber() {
-		if ( workNumber == null )
-			workNumber = "";
-		return workNumber;
+	public String getPrimaryNumber() {
+		if ( primaryNumber == null )
+			primaryNumber = "";
+		return primaryNumber;
 	}
-	public void setWorkNumber(String workNumber) {
-		this.workNumber = workNumber;
-	}
-	public String getCellNumber() {
-		if ( cellNumber == null )
-			cellNumber = "";
-		return cellNumber;
-	}
-	public void setCellNumber(String cellNumber) {
-		this.cellNumber = cellNumber;
+	public void setPrimaryNumber(String primaryNumber) {
+		this.primaryNumber = primaryNumber;
 	}
 	public String getEmail() {
 		if ( email == null )
@@ -247,21 +262,13 @@ public class Customer {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	public String getAddress01() {
-		if ( address01 == null )
-			address01 = "";
-		return address01;
+	public String getAddress() {
+		if ( address == null )
+			address = "";
+		return address;
 	}
-	public void setAddress01(String address01) {
-		this.address01 = address01;
-	}
-	public String getAddress02() {
-		if ( address02 == null )
-			address02 = "";
-		return address02;
-	}
-	public void setAddress02(String address02) {
-		this.address02 = address02;
+	public void setAddress(String address01) {
+		this.address = address01;
 	}
 	public String getCity() {
 		if ( city == null )
@@ -300,9 +307,9 @@ public class Customer {
 
 	@Override
 	public String toString() {
-		return "Customer [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", homeNumber="
-				+ homeNumber + ", workNumber=" + workNumber + ", cellNumber=" + cellNumber + ", email=" + email
-				+ ", address01=" + address01 + ", address02=" + address02 + ", city=" + city + ", state=" + state
+		return "Customer [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName +  ", secondaryNumber=" 
+				+ secondaryNumber + ", primaryNumber=" + primaryNumber + ", email=" + email
+				+ ", address01=" + address + ", city=" + city + ", state=" + state
 				+ ", postalCode=" + postalCode + ", country=" + country + "]";
 	}
 	

@@ -41,6 +41,12 @@ public class CustomerTest {
 			for ( Customer cust : list) {
 				logger.debug(cust.toString());
 			}
+			
+			logger.debug("====================================================");
+			list = Customer.getCustomersByContactNumber("888");
+			for ( Customer cust : list) {
+				logger.debug(cust.toString());
+			}
 		} catch (ServiceException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
