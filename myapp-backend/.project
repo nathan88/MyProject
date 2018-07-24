@@ -28,11 +28,4 @@
 		<nature>org.apache.ivyde.eclipse.ivynature</nature>
 		<nature>org.eclipse.wst.common.project.facet.core.nature</nature>
 	</natures>
-	<linkedResources>
-		<link>
-			<name>src/com/kat/myapp/backend/test/WorkOrderTest.java</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/My%20Games/WorkOrderTest.java</locationURI>
-		</link>
-	</linkedResources>
 </projectDescription>
