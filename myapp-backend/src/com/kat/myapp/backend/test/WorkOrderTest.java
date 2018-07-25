@@ -13,19 +13,20 @@ public class WorkOrderTest {
 	public static void main(String[] args) {
 		try {
 			// add new workOrder test
-	//		WorkOrder workOne = new WorkOrder();
-	//		workOne.setAdvisor("Joe Wong");
-	//		workOne.setBillingRate(99);
-	//		workOne.setCustomerID(1);
-	//		workOne.setDateOpened("2018-04-03");
-	//		workOne.setEstimateDateTime("2018-04-03");
-	//		workOne.setPromisedDateTime("2018-04-03");
-	//		workOne.setReadyDateTime("2018-04-03");
-	//		workOne.setStatusCode(003);
-	//		workOne.setStatusString("Under maintenance");
-	//		workOne.setVin("VIN123123123");
-	//		workOne.setVisitReason("Totaled");
-	//		workOne.setWorkOrderID(003);
+			WorkOrder workOne = new WorkOrder();
+			workOne.setAdvisor("Joe Wong");
+			workOne.setBillingRate(99);
+			workOne.setCustomerID(1);
+			workOne.setDateOpened("2018-04-03 08:00:00");
+			workOne.setEstimateDateTime("2018-04-03 15:30:00");
+			workOne.setPromisedDateTime("2018-04-03 16:30:00");
+			workOne.setReadyDateTime("2018-04-03");
+			workOne.setStatusCode(003);
+			workOne.setStatusDescription("Under maintenance");
+			workOne.setVin("VIN123123123");
+			workOne.setVisitReason("Totaled");
+//			workOne.setWorkOrderID(003);
+//			workOne.addWorkOrder();
 		
 			List<WorkOrder> list;
 		

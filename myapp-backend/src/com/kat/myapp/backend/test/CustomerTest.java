@@ -37,7 +37,7 @@ public class CustomerTest {
 			}
 			
 			logger.debug("====================================================");
-			list = Customer.getCustomersByPhone("8454618886", PhoneType.CELL_PHONE);
+			list = Customer.getCustomersByPhone("8454618886", PhoneType.PRIAMRY);
 			for ( Customer cust : list) {
 				logger.debug(cust.toString());
 			}

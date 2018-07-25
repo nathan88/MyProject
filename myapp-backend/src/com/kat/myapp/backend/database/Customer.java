@@ -160,15 +160,13 @@ public class Customer {
 	
 	private static String getPhoneValueString(String phoneNumber, PhoneType type) {
 		switch ( type ) {
-		case HOME_PHONE:
-			return " Where homeNumber = " + StringUtil.addQuotes(phoneNumber);
-			
-		case WORK_PHONE:
-			return " Where secondaryNumber = " + StringUtil.addQuotes(phoneNumber);
-			
-		case CELL_PHONE:
+		case PRIAMRY:
 			return " Where primaryNumber = " + StringUtil.addQuotes(phoneNumber);
 			
+		case SECONDARY:
+			return " Where secondaryNumber = " + StringUtil.addQuotes(phoneNumber);
+			
+		
 		}
 		
 		return "";

@@ -19,10 +19,10 @@ public class WorkOrder {
 	
 	private static final String SQL_INSERT = "insert into workorder (customerID,vin,advisor,dateOpened,visitReason,estimateDateTime,"
 			+ "promisedDateTime,statusCode,readyDateTime,billingRate) ";	
-	//private static final String SQL_SELECT = "SELECT workOrderID, customerID, vin, advisor, dateOpened, visitReason, estimateDateTime,"  
-	//		+ "promisedDateTime, statusCode, readyDateTime, billingRate, b.description from workOrder a, status b where a.statusCode = b.statusCode "; 
-	private static final String SQL_SELECT = "SELECT workOrderID, customerID, vin, advisor, dateOpened, visitReason, estimateDateTime,"
-			+ "promisedDateTime, statusCode, readyDateTime, billingRate from workOrder";
+	private static final String SQL_SELECT = "SELECT workOrderID, customerID, vin, advisor, dateOpened, visitReason, estimateDateTime,"  
+			+ "promisedDateTime, a.statusCode, readyDateTime, billingRate, b.description as statusDescription from workOrder a, status b where a.statusCode = b.statusCode "; 
+	//private static final String SQL_SELECT = "SELECT workOrderID, customerID, vin, advisor, dateOpened, visitReason, estimateDateTime,"
+	//		+ "promisedDateTime, statusCode, readyDateTime, billingRate from workOrder";
 	private static final String SQL_SELECT_ORDER = " Order By dateOpened ";
 	
 	private int workOrderID;
@@ -36,7 +36,7 @@ public class WorkOrder {
 	private int statusCode	;
 	private String readyDateTime;
 	private float billingRate;
-	private String statusString;
+	private String statusDescription;
 	
 	private Customer customer;
 	
@@ -52,7 +52,7 @@ public class WorkOrder {
 		sb.append(StringUtil.addQuotes(getPromisedDateTime()) +", ");
 		sb.append(getStatusCode() +", ");
 		sb.append(StringUtil.addQuotes(getReadyDateTime()) +", ");
-		sb.append(getBillingRate() +", ");
+		sb.append(getBillingRate() +") ");
 		
 		return sb.toString();
 	}
@@ -118,6 +118,7 @@ public class WorkOrder {
 			setStatusCode(rs.getInt("statusCode"));
 			setReadyDateTime(rs.getString("readyDateTime"));
 			setBillingRate(rs.getFloat("billingRate"));
+			setStatusDescription(rs.getString("statusDescription"));
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -198,11 +199,11 @@ public class WorkOrder {
 		this.billingRate = billingRate;
 	}
 	
-	public String getStatusString() {
-		return statusString;
+	public String getStatusDescription() {
+		return statusDescription;
 	}
-	public void setStatusString(String statusString) {
-		this.statusString = statusString;
+	public void setStatusDescription(String statusDescription) {
+		this.statusDescription = statusDescription;
 	}
 	
 	//---------------------  Customer Info ----------------------------------------
@@ -244,7 +245,7 @@ public class WorkOrder {
 		return "WorkOrder [workOrderID=" + workOrderID + ", customerID=" + customerID + ", vin=" + vin + ", advisor="
 				+ advisor + ", dateOpened=" + dateOpened + ", visitReason=" + visitReason + ", estimateDateTime="
 				+ estimateDateTime + ", promisedDateTime=" + promisedDateTime + ", statusCode=" + statusCode
-				+ ", readyDateTime=" + readyDateTime + ", billingRate=" + billingRate + "]";
+				+ ", readyDateTime=" + readyDateTime + ", billingRate=" + billingRate + ", statusDescription=" + statusDescription + "]";
 	}
 	
 	
