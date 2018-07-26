@@ -23,7 +23,7 @@ public class WorkOrder {
 	private static final String SQL_SELECT = "SELECT workOrderID, customerID, "
 			+ "vin, advisor, dateOpened, visitReason, estimateDateTime,"  
 			+ "promisedDateTime, a.statusCode, readyDateTime, billingRate, "
-			+ "b.description as statusDescription from workOrder a, status "
+			+ "b.description as statusDescription from workorder a, status "
 			+ "b where a.statusCode = b.statusCode "; 
 	//private static final String SQL_SELECT = "SELECT workOrderID, customerID, vin, advisor, dateOpened, visitReason, estimateDateTime,"
 	//		+ "promisedDateTime, statusCode, readyDateTime, billingRate from workOrder";

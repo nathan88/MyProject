@@ -21,7 +21,8 @@ public class DataSourceManager {
 
 		if (dataSource == null) {
 			BasicDataSource ds = new BasicDataSource();
-			ds.setUrl("jdbc:mysql://localhost/myapp");
+			//ds.setUrl("jdbc:mysql://localhost/myapp");
+			ds.setUrl("jdbc:mysql://35.237.136.194:3306/carsystem");
 			ds.setUsername("root");
 			ds.setPassword("weblogic01");
 			ds.setMinIdle(5);
