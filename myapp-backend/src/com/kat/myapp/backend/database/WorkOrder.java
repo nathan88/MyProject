@@ -17,10 +17,14 @@ public class WorkOrder {
 	
 	final static Logger logger = Logger.getLogger(WorkOrder.class);
 	
-	private static final String SQL_INSERT = "insert into workorder (customerID,vin,advisor,dateOpened,visitReason,estimateDateTime,"
+	private static final String SQL_INSERT = "insert into workorder (customerID"
+			+ ",vin,advisor,dateOpened,visitReason,estimateDateTime,"
 			+ "promisedDateTime,statusCode,readyDateTime,billingRate) ";	
-	private static final String SQL_SELECT = "SELECT workOrderID, customerID, vin, advisor, dateOpened, visitReason, estimateDateTime,"  
-			+ "promisedDateTime, a.statusCode, readyDateTime, billingRate, b.description as statusDescription from workOrder a, status b where a.statusCode = b.statusCode "; 
+	private static final String SQL_SELECT = "SELECT workOrderID, customerID, "
+			+ "vin, advisor, dateOpened, visitReason, estimateDateTime,"  
+			+ "promisedDateTime, a.statusCode, readyDateTime, billingRate, "
+			+ "b.description as statusDescription from workOrder a, status "
+			+ "b where a.statusCode = b.statusCode "; 
 	//private static final String SQL_SELECT = "SELECT workOrderID, customerID, vin, advisor, dateOpened, visitReason, estimateDateTime,"
 	//		+ "promisedDateTime, statusCode, readyDateTime, billingRate from workOrder";
 	private static final String SQL_SELECT_ORDER = " Order By dateOpened ";
@@ -40,6 +44,7 @@ public class WorkOrder {
 	
 	private Customer customer;
 	
+	// Converting values into a SQL statement string for injection
 	private String getValuesString() {
 		StringBuffer sb = new StringBuffer(" values(");
 		
@@ -57,7 +62,7 @@ public class WorkOrder {
 		return sb.toString();
 	}
 	
-	
+	// Tries to add new workOrder into database and increments the primary key (workOrde
 	public void addWorkOrder() throws ServiceException {
 		try {
 			Connection connection = DataSourceManager.getInstance().getConnection();
@@ -128,6 +133,14 @@ public class WorkOrder {
 	
 	public static List<WorkOrder> getWorkOrders() throws ServiceException {
 		return retrieveWorkOrders();
+	}
+	
+	public static void addMechanic(int mechanicID) {
+		return;
+	}
+	
+	public static void addTask(int taskID) {
+		return;
 	}
 	
 	
