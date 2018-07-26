@@ -1,5 +1,6 @@
 package com.kat.myapp.backend.database;
 
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -12,7 +13,12 @@ import org.apache.log4j.Logger;
 import com.kat.myapp.backend.exception.ServiceException;
 import com.kat.myapp.backend.util.StringUtil;
 
-public class Customer {
+public class Customer implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2000448118223314387L;
+
 	final static Logger logger = Logger.getLogger(Customer.class);
 	
 	private static final String SQL_INSERT = "insert into Customer (firstName,lastName,secondaryNumber,primaryNumber,email,address01,address02,city,state,postalCode,country) ";	
