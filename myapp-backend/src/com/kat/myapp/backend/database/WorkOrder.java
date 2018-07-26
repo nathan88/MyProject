@@ -19,12 +19,12 @@ public class WorkOrder {
 	
 	private static final String SQL_INSERT = "insert into workorder (customerID"
 			+ ",vin,advisor,dateOpened,visitReason,estimateDateTime,"
-			+ "promisedDateTime,statusCode,readyDateTime,billingRate) ";	
+			+ "promisedDateTime,statusCode,readyDateTime,billingRate) ";
 	private static final String SQL_SELECT = "SELECT workOrderID, customerID, "
 			+ "vin, advisor, dateOpened, visitReason, estimateDateTime,"  
 			+ "promisedDateTime, a.statusCode, readyDateTime, billingRate, "
 			+ "b.description as statusDescription from workorder a, status "
-			+ "b where a.statusCode = b.statusCode "; 
+			+ "b where a.statusCode = b.statusCode ";
 	//private static final String SQL_SELECT = "SELECT workOrderID, customerID, vin, advisor, dateOpened, visitReason, estimateDateTime,"
 	//		+ "promisedDateTime, statusCode, readyDateTime, billingRate from workOrder";
 	private static final String SQL_SELECT_ORDER = " Order By dateOpened ";
