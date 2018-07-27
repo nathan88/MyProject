@@ -21,9 +21,9 @@ public class Customer implements Serializable {
 
 	final static Logger logger = Logger.getLogger(Customer.class);
 	
-	private static final String SQL_INSERT = "insert into Customer (firstName,lastName,secondaryNumber,primaryNumber,email,address01,address02,city,state,postalCode,country) ";	
+	private static final String SQL_INSERT = "insert into customer (firstName,lastName,secondaryNumber,primaryNumber,email,address01,address02,city,state,postalCode,country) ";	
 	private static final String SQL_SELECT = "Select customerID,firstName,lastName,homeNumber,secondaryNumber,primaryNumber,"
-			+ "email,address,city,state,postalCode,country from Customer"; 
+			+ "email,address,city,state,postalCode,country from customer"; 
 	private static final String SQL_WHERE_BY_NAME   = " and firstName like '%@@var%' "; 
 	private static final String SQL_WHERE_BY_NUMBER = " and primaryNumber like '%@@var%'  or secondaryNumber like '%@@var%' "; 
 //	private static final String SQL_WHERE_BY_PLATE = " firstName like '%@@var%\' "; 

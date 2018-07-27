@@ -14,16 +14,15 @@ import com.kat.myapp.backend.util.StringUtil;
 
 
 public class WorkOrder {
-	
 	final static Logger logger = Logger.getLogger(WorkOrder.class);
 	
-	private static final String SQL_INSERT = "insert into workorder (customerID"
+	private static final String SQL_INSERT = "INSERT INTO workOrder (customerID"
 			+ ",vin,advisor,dateOpened,visitReason,estimateDateTime,"
 			+ "promisedDateTime,statusCode,readyDateTime,billingRate) ";
 	private static final String SQL_SELECT = "SELECT workOrderID, customerID, "
 			+ "vin, advisor, dateOpened, visitReason, estimateDateTime,"  
 			+ "promisedDateTime, a.statusCode, readyDateTime, billingRate, "
-			+ "b.description as statusDescription from workorder a, status "
+			+ "b.description as statusDescription from workOrder a, status "
 			+ "b where a.statusCode = b.statusCode ";
 	//private static final String SQL_SELECT = "SELECT workOrderID, customerID, vin, advisor, dateOpened, visitReason, estimateDateTime,"
 	//		+ "promisedDateTime, statusCode, readyDateTime, billingRate from workOrder";
@@ -135,8 +134,10 @@ public class WorkOrder {
 		return retrieveWorkOrders();
 	}
 	
-	public static void addMechanic(int mechanicID) {
-		return;
+	public void addMechanic(int mechanicID) {
+		MechanicWorkOrderList newWorkOrder = new MechanicWorkOrderList();
+		newWorkOrder.setMechanicID(mechanicID);
+		newWorkOrder.setWorkOrderID(getWorkOrderID());
 	}
 	
 	public static void addTask(int taskID) {
