@@ -12,10 +12,10 @@ import org.apache.log4j.Logger;
 import com.kat.myapp.backend.exception.ServiceException;
 import com.kat.myapp.backend.util.StringUtil;
 
-public class MechanicWorkOrderList {
+public class MechanicWorkOrders {
 	final static Logger logger = Logger.getLogger(WorkOrder.class);
 	
-	private static final String SQL_INSERT = "INSERT INTO mechanicWorkOrderList"
+	private static final String SQL_INSERT = "INSERT INTO mechanicWorkOrders"
 			+ " (mechanicID, workOrderID) ";
 	private static final String SQL_SELECT = "SELECT mechanicID, workOrderID ";
 	private static final String SQL_SELECT_ORDER = " Order by mechanicID ";
@@ -23,7 +23,7 @@ public class MechanicWorkOrderList {
 	private int mechanicID;
 	private int workOrderID;
 	
-	public MechanicWorkOrderList() {
+	public MechanicWorkOrders() {
 		super();
 	}
 

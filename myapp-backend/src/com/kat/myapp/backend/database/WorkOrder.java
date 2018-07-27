@@ -135,7 +135,7 @@ public class WorkOrder {
 	}
 	
 	public void addMechanic(int mechanicID) {
-		MechanicWorkOrderList newWorkOrder = new MechanicWorkOrderList();
+		MechanicWorkOrders newWorkOrder = new MechanicWorkOrders();
 		newWorkOrder.setMechanicID(mechanicID);
 		newWorkOrder.setWorkOrderID(getWorkOrderID());
 	}
