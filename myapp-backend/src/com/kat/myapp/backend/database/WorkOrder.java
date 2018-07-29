@@ -1,5 +1,6 @@
 package com.kat.myapp.backend.database;
 
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -13,17 +14,19 @@ import com.kat.myapp.backend.exception.ServiceException;
 import com.kat.myapp.backend.util.StringUtil;
 
 
-public class WorkOrder {
+public class WorkOrder implements Serializable {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8978334776759368499L;
+
 	final static Logger logger = Logger.getLogger(WorkOrder.class);
 	
-	private static final String SQL_INSERT = "INSERT INTO workOrder (customerID"
-			+ ",vin,advisor,dateOpened,visitReason,estimateDateTime,"
-			+ "promisedDateTime,statusCode,readyDateTime,billingRate) ";
-	private static final String SQL_SELECT = "SELECT workOrderID, customerID, "
-			+ "vin, advisor, dateOpened, visitReason, estimateDateTime,"  
-			+ "promisedDateTime, a.statusCode, readyDateTime, billingRate, "
-			+ "b.description as statusDescription from workOrder a, status "
-			+ "b where a.statusCode = b.statusCode ";
+	private static final String SQL_INSERT = "insert into workorder (customerID,vin,advisor,dateOpened,visitReason,estimateDateTime,"
+			+ "promisedDateTime,statusCode,readyDateTime,billingRate) ";	
+	private static final String SQL_SELECT = "SELECT workOrderID, customerID, vin, advisor, dateOpened, visitReason, estimateDateTime,"  
+			+ "promisedDateTime, a.statusCode, readyDateTime, billingRate, b.description as statusDescription from workorder a, status b where a.statusCode = b.statusCode "; 
 	//private static final String SQL_SELECT = "SELECT workOrderID, customerID, vin, advisor, dateOpened, visitReason, estimateDateTime,"
 	//		+ "promisedDateTime, statusCode, readyDateTime, billingRate from workOrder";
 	private static final String SQL_SELECT_ORDER = " Order By dateOpened ";

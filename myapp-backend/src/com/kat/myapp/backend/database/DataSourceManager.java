@@ -3,9 +3,14 @@ package com.kat.myapp.backend.database;
 import java.sql.Connection;
 import java.sql.SQLException;
 import org.apache.commons.dbcp2.BasicDataSource;
+import org.apache.log4j.Logger;
+
+import com.mysql.jdbc.Driver;
 
 public class DataSourceManager {
 
+	final static Logger logger = Logger.getLogger(DataSourceManager.class);
+	
 	private static DataSourceManager _instance = new DataSourceManager();
 	private BasicDataSource dataSource;
 
@@ -18,11 +23,18 @@ public class DataSourceManager {
 	}
 
 	private BasicDataSource getDataSource() {
+		com.mysql.jdbc.Driver driver;
+		try {
+			driver = new Driver();
 
 		if (dataSource == null) {
 			BasicDataSource ds = new BasicDataSource();
+			ds.setDriver(driver);
 			//ds.setUrl("jdbc:mysql://localhost/myapp");
-			ds.setUrl("jdbc:mysql://35.237.136.194:3306/carsystem");
+			String url = "jdbc:mysql://35.237.136.194:3306/carsystem";
+			logger.debug("Connect to url: " + url);
+			
+			ds.setUrl(url);
 			ds.setUsername("root");
 			ds.setPassword("weblogic01");
 			ds.setMinIdle(5);
@@ -30,6 +42,10 @@ public class DataSourceManager {
 			ds.setMaxOpenPreparedStatements(100);
 
 			dataSource = ds;
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		return dataSource;
 	}

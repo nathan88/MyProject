@@ -13,7 +13,7 @@ import org.apache.log4j.Logger;
 import com.kat.myapp.backend.exception.ServiceException;
 import com.kat.myapp.backend.util.StringUtil;
 
-public class Customer implements Serializable {
+public class Customer implements Serializable, LookupIF<Customer> {
 	/**
 	 * 
 	 */
@@ -21,12 +21,14 @@ public class Customer implements Serializable {
 
 	final static Logger logger = Logger.getLogger(Customer.class);
 	
-	private static final String SQL_INSERT = "insert into customer (firstName,lastName,secondaryNumber,primaryNumber,email,address01,address02,city,state,postalCode,country) ";	
-	private static final String SQL_SELECT = "Select customerID,firstName,lastName,homeNumber,secondaryNumber,primaryNumber,"
-			+ "email,address,city,state,postalCode,country from customer"; 
-	private static final String SQL_WHERE_BY_NAME   = " and firstName like '%@@var%' "; 
-	private static final String SQL_WHERE_BY_NUMBER = " and primaryNumber like '%@@var%'  or secondaryNumber like '%@@var%' "; 
-//	private static final String SQL_WHERE_BY_PLATE = " firstName like '%@@var%\' "; 
+	private static final String SQL_INSERT = "insert into customer (firstName,lastName,secondaryNumber,primaryNumber,email,address,city,state,postalCode,country) ";	
+	private static final String SQL_SELECT = "Select a.customerID,firstName,lastName,secondaryNumber,primaryNumber,"
+			+ "email,address,city,state,postalCode,country from customer a"; 
+
+	private static final String SQL_WHERE_BY_NUMBER = " and primaryNumber like '%@@var%' or secondaryNumber like '%@@var%' "; 
+	private static final String SQL_WHERE_BY_NAME   = " and firstName like '%@@var%' or lastName like '%@@var%' "; 
+	private static final String SQL_WHERE_BY_PLATE  = " , Vehicle b where b.license like '%@@var%' and b.customerID = a.customerID "; 
+	
 	private static final String SQL_SELECT_ORDER = " Order By firstName, lastName ";
 	
 	//private static List<Customer>customers ;
@@ -140,13 +142,43 @@ public class Customer implements Serializable {
 		return list;
 	}
 	
-	private static List<Customer> retrieveCustomerByPhone(String phoneNumber, PhoneType type) throws ServiceException {
+	private static List<Customer> retrieveCustomerByName(String name) throws ServiceException {
+		String sqlWhereString = " Where (1=1) " + SQL_WHERE_BY_NAME;
+		sqlWhereString = sqlWhereString.replaceAll("@@var", name.toUpperCase());
+		
 		List<Customer> list = new ArrayList<>();
 		try {
 			Connection connection = DataSourceManager.getInstance().getConnection();
 			Statement st = connection.createStatement();
 			
-			String query_str = SQL_SELECT + getPhoneValueString(phoneNumber, type) + SQL_SELECT_ORDER;
+			String query_str = SQL_SELECT + sqlWhereString + SQL_SELECT_ORDER;
+			logger.debug("query_str: " + query_str);
+			ResultSet rs = st.executeQuery(query_str);
+			while (rs.next()) {
+				Customer cust = new Customer(rs);
+				list.add(cust);
+			}
+			
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new ServiceException("Retrieve Customers failed. " + e.getMessage());
+		}
+		
+		return list;
+	}
+	
+	private static List<Customer> retrieveCustomerByPlate(String plate) throws ServiceException {
+		String sqlWhereString = SQL_WHERE_BY_PLATE;
+		sqlWhereString = sqlWhereString.replaceAll("@@var", plate);
+		
+		List<Customer> list = new ArrayList<>();
+		try {
+			Connection connection = DataSourceManager.getInstance().getConnection();
+			Statement st = connection.createStatement();
+			
+			String query_str = SQL_SELECT + sqlWhereString + SQL_SELECT_ORDER;
 			logger.debug("query_str: " + query_str);
 			ResultSet rs = st.executeQuery(query_str);
 			while (rs.next()) {
@@ -205,20 +237,6 @@ public class Customer implements Serializable {
 		
 		
 	}
-
-	public static List<Customer> getCustomers() throws ServiceException {
-		return retrieveCustomers();
-	}
-	
-	public static List<Customer> getCustomersByPhone(String phoneNumber, PhoneType type) throws ServiceException {
-		return retrieveCustomerByPhone(phoneNumber, type);
-	}
-	
-	public static List<Customer> getCustomersByContactNumber(String number) throws ServiceException {
-		return retrieveCustomersByContactNumber(number);
-	}
-
-
 
 	public int getId() {
 		return id;
@@ -307,6 +325,9 @@ public class Customer implements Serializable {
 		this.country = country;
 	}
 
+	public String getCustomerName() {
+		return firstName + ' ' + lastName;
+	}
 
 
 	@Override
@@ -315,8 +336,32 @@ public class Customer implements Serializable {
 				+ secondaryNumber + ", primaryNumber=" + primaryNumber + ", email=" + email
 				+ ", address01=" + address + ", city=" + city + ", state=" + state
 				+ ", postalCode=" + postalCode + ", country=" + country + "]";
+	
+	}	
+	
+	public static List<Customer> getCustomers() throws ServiceException {
+		return retrieveCustomers();
 	}
 	
 	
-
+	public static List<Customer> getCustomersByContactNumber(String number) throws ServiceException {
+		return retrieveCustomersByContactNumber(number);
+	}
+	
+	public List<Customer> getResult(String value, LookupType type) throws ServiceException {
+		if ( value == null || type == null )
+			return getCustomers();
+		
+		switch (type) {
+		case BYCONTACT:
+			return getCustomersByContactNumber(value);
+			
+		case BYNAME:
+			return retrieveCustomerByName(value);
+			
+		case BYPLATE:
+			return retrieveCustomerByPlate(value);
+		}
+		return null;
+	}
 }
