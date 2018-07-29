@@ -13,7 +13,7 @@ import com.kat.myapp.backend.exception.ServiceException;
 import com.kat.myapp.backend.util.StringUtil;
 
 public class MechanicWorkOrders {
-	final static Logger logger = Logger.getLogger(WorkOrder.class);
+	final static Logger logger = Logger.getLogger(MechanicWorkOrders.class);
 	
 	private static final String SQL_INSERT = "INSERT INTO mechanicWorkOrders"
 			+ " (mechanicID, workOrderID) ";

@@ -134,7 +134,7 @@ public class WorkOrder {
 		return retrieveWorkOrders();
 	}
 	
-	public void addMechanic(int mechanicID) {
+	public void addMechanicToWorkOrder(int mechanicID) {
 		MechanicWorkOrders newWorkOrder = new MechanicWorkOrders();
 		newWorkOrder.setMechanicID(mechanicID);
 		newWorkOrder.setWorkOrderID(getWorkOrderID());
