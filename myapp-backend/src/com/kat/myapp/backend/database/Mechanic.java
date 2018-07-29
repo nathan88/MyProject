@@ -12,8 +12,8 @@ import org.apache.log4j.Logger;
 import com.kat.myapp.backend.exception.ServiceException;
 import com.kat.myapp.backend.util.StringUtil;
 
-public class MechanicList {
-	final static Logger logger = Logger.getLogger(MechanicList.class);
+public class Mechanic {
+	final static Logger logger = Logger.getLogger(Mechanic.class);
 	
 	private static final String SQL_INSERT = "insert into mechaniclist (mechanicID"
 			+ "firstName, middleName, lastName, primaryNumber, secondaryNumber"
@@ -24,6 +24,7 @@ public class MechanicList {
 	private static final String SQL_SELECT_ORDER = " Order By mechanicID ";
 	
 	private int 	mechanicID;
+	private int		skillLevel;
 	private String 	firstName;
 	private String 	middleName;
 	private String	lastName;
@@ -37,7 +38,7 @@ public class MechanicList {
 	private String 	country;
 	
 	
-	public MechanicList() {
+	public Mechanic() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
@@ -46,6 +47,7 @@ public class MechanicList {
 	private String getValuesString() {
 		StringBuffer sb = new StringBuffer(" values(");
 			
+		sb.append(getSkillLevel() + ", ");
 		sb.append(StringUtil.addQuotes(getFirstName()) +", ");
 		sb.append(StringUtil.addQuotes(getMiddleName()) +", ");
 		sb.append(StringUtil.addQuotes(getLastName()) +", ");
@@ -59,6 +61,30 @@ public class MechanicList {
 		sb.append(StringUtil.addQuotes(getCountry()) +", ");
 		return sb.toString();
 	}
+	
+	public void addMechanic() throws ServiceException {
+		try {
+			Connection connection = DataSourceManager.getInstance().getConnection();
+			Statement st = connection.createStatement();
+			
+			String insert_str = SQL_INSERT + getValuesString();
+			logger.debug("query_str: " + insert_str);
+			int cnt = st.executeUpdate(insert_str);
+			
+			if ( cnt > 0 ) {
+				ResultSet rs = st.executeQuery("select last_insert_id()");
+				if ( rs.next() ) {
+					int lastid = rs.getInt(1);
+					logger.debug("last_id: <" + lastid + ">");
+					setMechanicID(lastid);
+					rs.close();
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new ServiceException("Add Mechanic failed. " + e.getMessage());
+		}
+	}
 
 	public int getMechanicID() {
 		return mechanicID;
@@ -66,6 +92,13 @@ public class MechanicList {
 
 	public void setMechanicID(int mechanicID) {
 		this.mechanicID = mechanicID;
+	}
+	public int getSkillLevel() {
+		return skillLevel;
+	}
+
+	public void setSkillLevel(int skillLevel) {
+		this.skillLevel = skillLevel;
 	}
 
 	public String getFirstName() {
